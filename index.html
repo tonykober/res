@@ -312,23 +312,100 @@
             const isPending = node.isPending;
             
             useEffect(() => { if (isActive && itemRef.current) setTimeout(() => itemRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100); }, [isActive]);
+
+            // Check if this is a Local Resource Root (Level 0 and has Rename capability)
+            const isLocalRoot = level === 0 && !!onRename;
+
+            // Define styles for Level 0 items (Full border box)
+            let level0Style = '';
+            if (level === 0) {
+                 if (isActive) {
+                    level0Style = 'border border-blue-500 rounded-xl my-1 mx-2 bg-blue-600/20 shadow-sm';
+                 } else {
+                    level0Style = 'border border-slate-600 rounded-xl my-1 mx-2 bg-slate-700/30 hover:bg-slate-700/50 hover:border-slate-500 shadow-sm';
+                 }
+            }
+
+            if (isLocalRoot) {
+                return (
+                    <div className="select-none py-1">
+                        <div ref={itemRef} className={`group flex flex-col py-2 pr-3 text-sm transition-colors cursor-pointer ${isActive ? 'text-blue-200' : 'text-slate-400 hover:text-slate-200'} ${level0Style}`} style={{ paddingLeft: `${indentSize}px` }} onClick={() => onSelect(node.fullPath)}>
+                            {/* First Line: Icon + Name */}
+                            <div className="flex items-center w-full mb-2">
+                                <div className={`w-5 h-5 mr-1 flex items-center justify-center rounded hover:bg-white/10 shrink-0 transition-transform ${!hasChildren ? 'invisible' : ''}`} onClick={(e) => { e.stopPropagation(); onToggle(node.fullPath); }}>
+                                    {isOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                                </div>
+                                <div className="mr-2 shrink-0">
+                                    {isActive ? <FolderOpen size={18} className="text-blue-400" /> : <Folder size={18} className={`group-hover:text-slate-300 ${isPending ? 'text-slate-600' : 'text-slate-400'}`} />}
+                                </div>
+                                <span className="truncate flex-1 font-bold text-base">
+                                    {node.name}
+                                </span>
+                            </div>
+                            
+                            {/* Second Line: Controls & Info */}
+                            <div className="flex items-center pl-8 gap-3">
+                                {/* Rename */}
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); onRename(node.name); }}
+                                    className="w-9 h-9 flex items-center justify-center bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg shadow-sm transition-transform active:scale-95"
+                                    title="更名"
+                                >
+                                    <Edit3 size={18} />
+                                </button>
+
+                                {/* Connect Action (if pending) */}
+                                {isPending && onConnect && (
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); onConnect(node.name); }}
+                                        className="w-9 h-9 flex items-center justify-center bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg shadow-sm transition-transform active:scale-95 animate-pulse"
+                                        title="連結資料夾"
+                                    >
+                                        <LinkIcon size={18} />
+                                    </button>
+                                )}
+
+                                {/* Remove Action */}
+                                <button 
+                                    onClick={(e) => { e.stopPropagation(); onRemove(node.fullPath, isPending); }} 
+                                    className="w-9 h-9 flex items-center justify-center bg-rose-600 hover:bg-rose-500 text-white rounded-lg shadow-sm transition-transform active:scale-95"
+                                    title="移除"
+                                >
+                                    <Trash2 size={18} />
+                                </button>
+
+                                {/* Status Info */}
+                                {isPending ? (
+                                    <div className="ml-auto px-2 py-1 bg-slate-700/50 rounded text-[10px] text-slate-400 border border-slate-600 whitespace-nowrap">
+                                        未連結
+                                    </div>
+                                ) : (
+                                    node.totalCount > 0 && (
+                                        <div className="ml-auto flex items-center justify-center h-8 px-3 bg-slate-700/50 rounded-lg text-xs font-mono text-slate-300 border border-slate-600">
+                                            {node.totalCount} 檔
+                                        </div>
+                                    )
+                                )}
+                            </div>
+                        </div>
+                        {hasChildren && isOpen && (
+                            <div>{Object.values(node.children).sort((a,b)=>a.name.localeCompare(b.name,'zh-TW')).map(child => (
+                                <FolderTreeItem key={child.fullPath} node={child} level={level+1} expandedFolders={expandedFolders} activeCategory={activeCategory} onToggle={onToggle} onSelect={onSelect} onRemove={onRemove} onConnect={onConnect} onRename={onRename} />
+                            ))}</div>
+                        )}
+                    </div>
+                );
+            }
             
+            // Standard Layout (Cloud items & Subfolders)
+            const standardActiveClass = isActive ? 'bg-blue-500/10 text-blue-200 border-blue-500' : 'text-slate-400 hover:bg-slate-800 border-transparent hover:text-slate-200';
+            const finalClass = level === 0 ? level0Style + (isActive ? ' text-blue-200' : ' text-slate-400 hover:text-slate-200') : standardActiveClass;
+            const borderClass = level === 0 ? '' : 'border-l-[3px]';
+
             return (
                 <div className="select-none">
-                    <div ref={itemRef} className={`group flex items-center py-1.5 pr-3 text-sm transition-colors cursor-pointer border-l-[3px] ${isActive ? 'bg-blue-500/10 text-blue-200 border-blue-500' : 'text-slate-400 hover:bg-slate-800 border-transparent hover:text-slate-200'}`} style={{ paddingLeft: `${indentSize}px` }} onClick={() => onSelect(node.fullPath)}>
+                    <div ref={itemRef} className={`group flex items-center py-1.5 pr-3 text-sm transition-colors cursor-pointer ${borderClass} ${finalClass}`} style={{ paddingLeft: `${indentSize}px` }} onClick={() => onSelect(node.fullPath)}>
                         <div className={`w-5 h-5 mr-1 flex items-center justify-center rounded hover:bg-white/10 shrink-0 transition-transform ${!hasChildren ? 'invisible' : ''}`} onClick={(e) => { e.stopPropagation(); onToggle(node.fullPath); }}>{isOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}</div>
-                        
-                        {/* New Rename Button: Show only for Local Root level (level 0) and if onRename is provided */}
-                        {onRename && level === 0 && (
-                            <button
-                                onClick={(e) => { e.stopPropagation(); onRename(node.name); }}
-                                className="w-5 h-5 mr-1 flex items-center justify-center text-slate-500 hover:text-blue-400 hover:bg-slate-700 rounded transition-colors"
-                                title="重新命名 (別名)"
-                            >
-                                <Edit3 size={13} />
-                            </button>
-                        )}
-                        
                         <div className="mr-2 shrink-0">{isActive ? <FolderOpen size={18} className="text-blue-400" /> : <Folder size={18} className={`group-hover:text-slate-300 ${isPending ? 'text-slate-600' : 'text-slate-400'}`} />}</div>
                         <span className={`truncate flex-1 font-medium ${isPending ? 'text-slate-500 italic' : ''}`}>
                             {node.name}
@@ -336,24 +413,6 @@
                         </span>
                         
                         <div className="flex items-center space-x-2">
-                            {isPending && onConnect && (
-                                <button
-                                    onClick={(e) => { e.stopPropagation(); onConnect(node.name); }}
-                                    className="w-5 h-5 flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white rounded transition-colors shadow-sm animate-pulse"
-                                    title="點擊連結並授權資料夾"
-                                >
-                                    <LinkIcon size={12} strokeWidth={3} />
-                                </button>
-                            )}
-                            {onRemove && level === 0 && (
-                                <button 
-                                    onClick={(e) => { e.stopPropagation(); onRemove(node.fullPath, isPending); }} 
-                                    className={`w-5 h-5 flex items-center justify-center ${isPending ? 'bg-slate-700 hover:bg-red-600/80 text-slate-400 hover:text-white' : 'bg-red-600 hover:bg-red-500 text-white'} rounded transition-colors shadow-sm`}
-                                    title="從清單中移除"
-                                >
-                                    <X size={12} strokeWidth={3} />
-                                </button>
-                            )}
                             {!isPending && node.totalCount > 0 && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-700/50 text-slate-500 font-bold">{node.totalCount}</span>}
                         </div>
                     </div>
@@ -718,13 +777,8 @@
             }, []);
 
             const handleRemoveLocalFolder = useCallback((folderPath, isPending) => {
-                if (isPending) {
-                     const name = folderPath.replace('本地資源/', '');
-                     setPendingLocalRoots(prev => { const next = new Set(prev); next.delete(name); return next; });
-                     setStatusMsg({ type: 'success', text: `已移除待連結項目 "${name}"` });
-                } else {
-                    setFolderToRemove(folderPath);
-                }
+                // Remove direct deletion logic, trigger confirmation for all
+                setFolderToRemove(folderPath);
             }, []);
             
             const handleRenameLocalFolder = useCallback((oldName) => {
@@ -796,17 +850,30 @@
                 if (!folderToRemove) return;
                 
                 const rootName = folderToRemove.replace('本地資源/', '').split('/')[0];
-                setLocalHandles(prev => {
-                    const next = { ...prev };
-                    delete next[rootName];
-                    return next;
-                });
                 
-                 setLocalFiles(prev => prev.filter(file => !file.category.startsWith(folderToRemove)));
-                setStatusMsg({ type: 'success', text: `路徑資源已從清單移除。` });
+                // Check if it is a pending root first
+                if (pendingLocalRoots.has(rootName)) {
+                    setPendingLocalRoots(prev => {
+                        const next = new Set(prev);
+                        next.delete(rootName);
+                        return next;
+                    });
+                    setStatusMsg({ type: 'success', text: `已移除待連結項目 "${rootName}"` });
+                } else {
+                    // Standard removal logic for linked folders
+                    setLocalHandles(prev => {
+                        const next = { ...prev };
+                        delete next[rootName];
+                        return next;
+                    });
+                    
+                    setLocalFiles(prev => prev.filter(file => !file.category.startsWith(folderToRemove)));
+                    setStatusMsg({ type: 'success', text: `路徑資源已從清單移除。` });
+                }
+
                 setFolderToRemove(null);
                 if (activeCategory.startsWith(folderToRemove)) setActiveCategory('全部');
-            }, [folderToRemove, activeCategory]);
+            }, [folderToRemove, activeCategory, pendingLocalRoots]);
             
             const handleSaveLocalIndex = async (e) => {
                 e.stopPropagation();
