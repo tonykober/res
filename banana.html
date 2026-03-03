@@ -49,28 +49,28 @@
         }
     </style>
 </head>
-<!-- 設定整體為 h-[100dvh] 與 overflow-hidden，確保桌機無全域捲動軸 -->
 <body class="text-white flex items-center justify-center h-[100dvh] w-full overflow-hidden p-2 sm:p-4 lg:p-6">
 
     <div class="container mx-auto max-w-6xl w-full h-full flex flex-col min-h-0">
-        <!-- 主卡片：桌機時不捲動(交由內部捲動)，手機時允許卡片整體捲動 -->
         <div class="bg-[#1e232e] rounded-xl shadow-2xl p-4 sm:p-6 md:p-8 border border-slate-700/50 flex-1 flex flex-col md:flex-row gap-6 md:gap-8 min-h-0 overflow-y-auto md:overflow-hidden custom-scrollbar">
             
             <!-- 左側輸入區 (約佔 55%) -->
             <div class="md:w-[55%] flex flex-col gap-4 min-h-0 shrink-0 md:shrink md:overflow-y-auto custom-scrollbar md:pr-3">
                 
                 <!-- 標題和 Logo -->
-                <div class="flex items-center gap-4 shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 256 256" class="text-yellow-400">
-                        <path fill="currentColor" d="M224 128a96 96 0 0 1-174.45 52.82l-1.93-7.73a88 88 0 1 1 123.6-123.61l7.73 1.93A95.49 95.49 0 0 1 224 128ZM128 32a8 8 0 0 0-8 8v88a8 8 0 0 0 16 0V40a8 8 0 0 0-8-8Zm-40 96a8 8 0 0 0 8 8h88a8 8 0 0 0 0-16H96a8 8 0 0 0-8 8ZM50.14 70.14a8 8 0 0 0 11.32-11.32l-62-62a8 8 0 0 0-11.32 11.32Zm155.72 0-62 62a8 8 0 0 0 11.32 11.32l62-62a8 8 0 0 0-11.32-11.32Z"/>
-                    </svg>
-                    <div>
-                        <h1 class="text-2xl md:text-3xl font-bold text-yellow-400 tracking-wide">Nano Banana</h1>
-                        <p class="text-slate-300 text-xs md:text-sm mt-1">AI 圖片生成器 (支援最多4張圖片輸入)</p>
+                <div class="flex items-center justify-between shrink-0">
+                    <div class="flex items-center gap-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 256 256" class="text-yellow-400">
+                            <path fill="currentColor" d="M224 128a96 96 0 0 1-174.45 52.82l-1.93-7.73a88 88 0 1 1 123.6-123.61l7.73 1.93A95.49 95.49 0 0 1 224 128ZM128 32a8 8 0 0 0-8 8v88a8 8 0 0 0 16 0V40a8 8 0 0 0-8-8Zm-40 96a8 8 0 0 0 8 8h88a8 8 0 0 0 0-16H96a8 8 0 0 0-8 8ZM50.14 70.14a8 8 0 0 0 11.32-11.32l-62-62a8 8 0 0 0-11.32 11.32Zm155.72 0-62 62a8 8 0 0 0 11.32 11.32l62-62a8 8 0 0 0-11.32-11.32Z"/>
+                        </svg>
+                        <div>
+                            <h1 class="text-2xl md:text-3xl font-bold text-yellow-400 tracking-wide">Nano Banana</h1>
+                            <p class="text-slate-300 text-xs md:text-sm mt-1">AI 圖片生成器 (支援最多4張圖片輸入)</p>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- 圖片縮圖畫廊 (永遠顯示 4 格，同行不換行，自適應寬度不捲動) -->
+                <!-- 圖片縮圖畫廊 -->
                 <div id="image-gallery" class="flex w-full gap-2 sm:gap-3 shrink-0 mt-2 pt-3 pr-2 pb-2">
                     <!-- 縮圖與虛線框將會由 JS 動態產生於這裡 -->
                 </div>
@@ -105,13 +105,13 @@
                         <button type="button" class="preset-btn bg-[#2a303c] hover:bg-[#374151] border border-[#475166] text-slate-300 text-[11px] sm:text-xs py-1 px-2.5 rounded-full transition-colors whitespace-nowrap">零部件拆解分析</button>
                     </div>
 
-                    <!-- 將生成圖片按鈕切分為左右兩個按鈕 -->
+                    <!-- 生成圖片與設定按鈕 -->
                     <div class="shrink-0 flex gap-2 w-full">
                         <button id="generate-btn" class="flex-1 flex flex-col items-center justify-center bg-[#eab308] hover:bg-[#d97706] text-[#1e232e] py-2 px-4 rounded-lg transition-transform duration-200 ease-in-out transform hover:scale-[1.02] focus:outline-none disabled:bg-[#475166] disabled:text-slate-400 disabled:cursor-not-allowed disabled:transform-none shadow-lg">
                             <span id="generate-btn-main-text" class="text-base font-bold leading-tight">生成圖片</span>
                             <span id="generate-btn-sub-text" class="text-[10px] font-medium opacity-80 mt-0.5">Gemini 2.5 Flash (基礎版)</span>
                         </button>
-                        <button id="model-select-btn" class="bg-[#2a303c] hover:bg-[#374151] border border-[#475166] text-slate-300 w-12 sm:w-14 rounded-lg transition-colors flex items-center justify-center shadow-lg group focus:outline-none" title="選擇模型版本與 API">
+                        <button id="model-select-btn" class="bg-[#2a303c] hover:bg-[#374151] border border-[#475166] text-slate-300 w-12 sm:w-14 rounded-lg transition-colors flex items-center justify-center shadow-lg group focus:outline-none" title="授權設定與模型選擇">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16" class="group-hover:text-yellow-400 transition-colors">
                                 <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
                                 <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"/>
@@ -133,20 +133,18 @@
                      </button>
                 </div>
                 
-                <!-- 圖片顯示區 (自動彈性縮放，維持比例或適應空間) -->
+                <!-- 圖片顯示區 -->
                 <div id="image-container" class="w-full flex-1 min-h-[220px] bg-[#2a303c] rounded-lg flex items-center justify-center border-2 border-dashed border-[#475166] relative overflow-hidden group shrink">
                     <!-- 載入動畫 -->
                     <div id="loader" class="loader hidden"></div>
-                    <!-- 生成的圖片：改用 absolute 滿版定位，利用 object-contain 維持圖片比例 -->
+                    <!-- 生成的圖片 -->
                     <img id="generated-image" src="" alt="生成的圖片" class="absolute inset-0 w-full h-full object-contain hidden z-10 bg-black/20 cursor-zoom-in transition-transform group-hover:scale-[1.03] duration-300">
                     <!-- 提示文字 -->
                     <p id="placeholder-text" class="text-slate-500 text-sm sm:text-base text-center p-4 absolute">圖片將會顯示在這裡</p>
                 </div>
                 
                 <!-- AI 思路與日誌區塊 -->
-                <!-- 利用 flex-[0.7] 或 max-h 控制日誌高度，確保不擠壓到圖片 -->
                 <div id="ai-log-container" class="w-full bg-[#181d26] border border-[#2d3748] rounded-lg flex flex-col shadow-inner shrink-0 md:flex-[0.7] min-h-[160px] max-h-[280px] overflow-hidden">
-                    <!-- 獨立的固定標題區塊 -->
                     <div class="bg-[#181d26] px-4 py-3 border-b border-[#2d3748] flex justify-between items-center shrink-0 shadow-sm z-10">
                         <span class="text-yellow-400 font-bold flex items-center gap-2 text-sm sm:text-base">
                             🤖 AI 執行與思路日誌
@@ -156,7 +154,6 @@
                           <span class="relative inline-flex rounded-full h-3 w-3 bg-yellow-500"></span>
                         </span>
                     </div>
-                    <!-- 獨立的捲動內容區塊 -->
                     <div id="ai-log-content" class="flex-1 overflow-y-auto custom-scrollbar px-4 pb-4 pt-3 space-y-3 whitespace-pre-wrap leading-relaxed tracking-wide text-slate-300 text-xs sm:text-sm font-mono relative">
                         <div class="text-yellow-500/80 text-xs border border-yellow-500/20 p-3 rounded-md bg-yellow-500/10 flex flex-col gap-1.5 w-full text-left whitespace-normal">
                             <div class="font-bold text-yellow-500 flex items-center gap-1.5">
@@ -164,10 +161,10 @@
                                     <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.146.146 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.163.163 0 0 1-.054.06.116.116 0 0 1-.066.017H1.146a.115.115 0 0 1-.066-.017.163.163 0 0 1-.054-.06.176.176 0 0 1 .002-.183L7.884 2.073a.147.147 0 0 1 .054-.057zm1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566z"/>
                                     <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995z"/>
                                 </svg>
-                                系統提示：本工具使用 Gemini API。
+                                安全提醒：
                             </div>
                             <div class="text-yellow-500/70 leading-relaxed">
-                                請確保您已登入 Google 帳號，否則可能無法正常生成圖片。
+                                若您於外部網站 (如 GitHub Pages) 開啟此工具，系統將自動引導您進行 API 金鑰授權，所有金鑰僅存於當下記憶體中，關閉即失效。
                             </div>
                         </div>
                         <div class="text-slate-500 italic text-left">等待生成指令...</div>
@@ -191,7 +188,7 @@
         <img id="lightbox-img" src="" class="max-w-[95vw] max-h-[95vh] object-contain rounded-lg shadow-2xl transform scale-95 transition-transform duration-300 cursor-zoom-out">
     </div>
 
-    <!-- 模型版本與 API 設定 模態框 -->
+    <!-- 模型版本與 API 授權設定 模態框 -->
     <div id="model-modal" class="fixed inset-0 z-[100] bg-black/80 hidden items-center justify-center p-4 backdrop-blur-sm opacity-0 transition-opacity duration-300">
         <div id="model-modal-inner" class="bg-[#1e232e] border border-[#475166] rounded-xl shadow-2xl w-full max-w-md overflow-hidden transform scale-95 transition-transform duration-300">
             <div class="px-5 py-4 border-b border-[#2d3748] flex justify-between items-center bg-[#2a303c]/50">
@@ -200,7 +197,7 @@
                         <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
                         <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"/>
                     </svg>
-                    模型版本與 API 設定
+                    登入與授權設定
                 </h3>
                 <button id="model-modal-close" class="text-slate-400 hover:text-red-400 transition-colors p-1">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/></svg>
@@ -208,28 +205,48 @@
             </div>
             <div class="p-6 space-y-5">
                 <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Google Gemini API 金鑰 (必填)</label>
+                    <input type="password" id="api-key-input" class="w-full bg-[#181d26] border border-[#475166] text-slate-200 text-sm rounded-lg focus:ring-yellow-500 focus:border-yellow-500 block p-3 outline-none transition-colors placeholder-slate-600" placeholder="貼上您的 API 金鑰...">
+                    
+                    <!-- 新增：取得金鑰的教學指南區塊 -->
+                    <div class="mt-3 text-xs text-slate-300 bg-[#2a303c]/80 p-3.5 rounded-lg border border-[#475166]">
+                        <p class="font-medium text-yellow-400 mb-2 flex items-center gap-1.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+                            如何免費取得金鑰？
+                        </p>
+                        <ol class="list-decimal pl-4 space-y-1.5 opacity-90">
+                            <li>前往 <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-blue-400 hover:text-blue-300 underline underline-offset-2 font-medium">Google AI Studio 官網</a> 並登入。</li>
+                            <li>點擊左側選單的 <strong>Get API key</strong>。</li>
+                            <li>點選 <strong>Create API key</strong> 按鈕，並選擇在新專案中建立。</li>
+                            <li>複製產生的一長串英數字串，貼上至上方輸入框即可！</li>
+                        </ol>
+                    </div>
+
+                    <p class="text-[11px] sm:text-xs text-yellow-500/80 leading-relaxed mt-3 bg-yellow-500/10 p-2.5 rounded border border-yellow-500/20">
+                        ⚠️ <span class="font-medium">隱私與安全提示：</span><br>您輸入的金鑰不會被我們儲存。當工具重整或關閉網頁後，金鑰即會自動遺忘消失，以避免產生任何隱私或權限盜用問題。
+                    </p>
+                </div>
+                <div>
                     <label class="block text-sm font-medium text-slate-300 mb-2">選擇模型版本</label>
                     <select id="model-select" class="w-full bg-[#181d26] border border-[#475166] text-slate-200 text-sm rounded-lg focus:ring-yellow-500 focus:border-yellow-500 block p-3 outline-none transition-colors cursor-pointer">
                         <option value="gemini-2.5-flash-image-preview">預設基礎版 (Gemini 2.5 Flash)</option>
                         <option value="gemini-3-pro-image-preview-11-2025">進階版 (Nano Banana Pro / Gemini 3 Pro)</option>
                     </select>
                 </div>
-                <div id="api-key-container" class="hidden space-y-2 transition-all">
-                    <label class="block text-sm font-medium text-slate-300">請輸入您的 Gemini API Key</label>
-                    <input type="password" id="api-key-input" class="w-full bg-[#181d26] border border-[#475166] text-slate-200 text-sm rounded-lg focus:ring-yellow-500 focus:border-yellow-500 block p-3 outline-none transition-colors placeholder-slate-600" placeholder="AI Studio API 金鑰...">
-                    <p class="text-xs text-yellow-500/80 leading-relaxed mt-2">
-                        ⚠️ <span class="font-medium">隱私與安全提示：</span><br>您輸入的金鑰不會被儲存，當工具重整或關閉後即會遺忘消失，以避免產生費用或權限盜用問題。
-                    </p>
-                </div>
             </div>
             <div class="px-6 py-4 border-t border-[#2d3748] bg-[#2a303c]/30 flex justify-end gap-3">
                 <button id="model-modal-cancel" class="px-4 py-2 text-sm font-medium text-slate-300 bg-transparent hover:bg-[#374151] rounded-lg transition-colors">取消</button>
-                <button id="model-modal-confirm" class="px-5 py-2 text-sm font-medium text-[#1e232e] bg-yellow-500 hover:bg-yellow-400 rounded-lg transition-colors shadow-sm">確認儲存</button>
+                <button id="model-modal-confirm" class="px-5 py-2 text-sm font-medium text-[#1e232e] bg-yellow-500 hover:bg-yellow-400 rounded-lg transition-colors shadow-sm">儲存並登入</button>
             </div>
         </div>
     </div>
 
     <script>
+        // ==========================================
+        // 環境預設金鑰設定
+        // ==========================================
+        const DEFAULT_API_KEY = ""; 
+        
         const promptInput = document.getElementById('prompt-input');
         const promptInputWrapper = document.getElementById('prompt-input-wrapper');
         const generateBtn = document.getElementById('generate-btn');
@@ -251,14 +268,12 @@
         const modelCancelBtn = document.getElementById('model-modal-cancel');
         const modelConfirmBtn = document.getElementById('model-modal-confirm');
         const modelSelect = document.getElementById('model-select');
-        const apiKeyContainer = document.getElementById('api-key-container');
         const apiKeyInput = document.getElementById('api-key-input');
 
         // 模型視窗開關邏輯
         function openModelModal() {
             modelSelect.value = currentModel;
             apiKeyInput.value = customApiKey;
-            toggleApiKeyInput();
             
             modelModal.classList.remove('hidden');
             modelModal.classList.add('flex');
@@ -279,32 +294,14 @@
             }, 300);
         }
 
-        function toggleApiKeyInput() {
-            if (modelSelect.value === 'gemini-2.5-flash-image-preview') {
-                apiKeyContainer.classList.add('hidden');
-            } else {
-                apiKeyContainer.classList.remove('hidden');
-            }
-        }
-
-        modelSelect.addEventListener('change', toggleApiKeyInput);
         modelBtn.addEventListener('click', openModelModal);
         modelCloseBtn.addEventListener('click', closeModelModal);
         modelCancelBtn.addEventListener('click', closeModelModal);
         
-        // 點擊 Modal 確認：如果選擇進階卻沒輸入金鑰，自動防呆降級
+        // 點擊 Modal 確認
         modelConfirmBtn.addEventListener('click', () => {
-            const selected = modelSelect.value;
-            const key = apiKeyInput.value.trim();
-
-            if (selected !== 'gemini-2.5-flash-image-preview' && !key) {
-                alert('⚠️ 尚未輸入 API 金鑰！\n因為進階模型需要 API 授權，已自動為您切換回預設的「基礎版模型」。');
-                currentModel = 'gemini-2.5-flash-image-preview';
-                customApiKey = '';
-            } else {
-                currentModel = selected;
-                customApiKey = key;
-            }
+            currentModel = modelSelect.value;
+            customApiKey = apiKeyInput.value.trim();
             
             // 同步更新按鈕上的模型版本文字
             const btnSubText = document.getElementById('generate-btn-sub-text');
@@ -315,6 +312,11 @@
             }
             
             closeModelModal();
+            
+            if (customApiKey) {
+                appendLog(`✅ [系統] 授權金鑰已設定！您可以開始生圖了。`);
+                hideError();
+            }
         });
 
         // 日誌區塊變數
@@ -397,10 +399,8 @@
             
             for (let i = 0; i < MAX_IMAGES; i++) {
                 const thumbWrapper = document.createElement('div');
-                // 改用 flex-1 與 aspect-square 讓格子自動均分並維持正方形，移除固定大小
                 thumbWrapper.className = 'relative flex-1 aspect-square max-w-[4.5rem] sm:max-w-[5rem] rounded-lg flex items-center justify-center transition-colors';
                 
-                // 設定每個格子的獨立拖放事件
                 thumbWrapper.addEventListener('dragover', (e) => {
                     e.preventDefault();
                     thumbWrapper.classList.add('!border-yellow-400', '!bg-[#323947]');
@@ -413,7 +413,7 @@
                     e.preventDefault();
                     thumbWrapper.classList.remove('!border-yellow-400', '!bg-[#323947]');
                     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                        const file = e.dataTransfer.files[0]; // 特定格子只接收第一張圖片
+                        const file = e.dataTransfer.files[0]; 
                         if (file.type.startsWith('image/')) {
                             processImageFileToSpecificZone(file, i);
                         }
@@ -421,7 +421,6 @@
                 });
 
                 if (uploadedImages[i] !== null) {
-                    // 已有圖片的格子
                     const imgObj = uploadedImages[i];
                     thumbWrapper.classList.add('border', 'border-[#475166]', 'bg-[#1e232e]');
                     
@@ -434,7 +433,6 @@
                     });
 
                     const removeBtn = document.createElement('button');
-                    // 移除按鈕微調位置
                     removeBtn.className = 'absolute -top-2 -right-2 bg-[#1e232e] hover:bg-red-500 text-slate-300 hover:text-white rounded-full p-1.5 shadow-md transition-colors z-20 border border-slate-500 hover:border-red-400';
                     removeBtn.innerHTML = `
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
@@ -448,7 +446,6 @@
                     thumbWrapper.appendChild(img);
                     thumbWrapper.appendChild(removeBtn);
                 } else {
-                    // 空白的虛線格子
                     thumbWrapper.classList.add('border-2', 'border-dashed', 'border-[#475166]', 'bg-[#2a303c]/40', 'cursor-pointer', 'hover:bg-[#323947]');
                     
                     const plusIcon = document.createElement('div');
@@ -457,11 +454,10 @@
                     
                     thumbWrapper.appendChild(plusIcon);
                     
-                    // 點擊空位會開啟上傳，並指定放置於該位置
                     thumbWrapper.addEventListener('click', (e) => {
                         e.stopPropagation();
                         targetUploadSlot = i;
-                        mainFileInput.removeAttribute('multiple'); // 特定格子只准選一張
+                        mainFileInput.removeAttribute('multiple');
                         mainFileInput.click();
                     });
                 }
@@ -476,7 +472,6 @@
             mainFileInput.value = ''; 
         }
 
-        // 將單張圖片推入指定的格子索引中
         function processImageFileToSpecificZone(file, index) {
             if (!file || !file.type.startsWith('image/')) {
                 showError('請上傳有效的圖片檔案！');
@@ -496,7 +491,6 @@
             reader.readAsDataURL(file);
         }
 
-        // 通用的處理圖片檔案函式，會自動尋找空的欄位塞入
         function processImageFileToAvailableZone(file) {
             if (!file || !file.type.startsWith('image/')) {
                 showError('請上傳有效的圖片檔案！');
@@ -512,7 +506,6 @@
             processImageFileToSpecificZone(file, firstEmptyIndex);
         }
 
-        // 小上傳按鈕點擊事件 (通用上傳)
         smallUploadBtn.addEventListener('click', () => {
             const activeImages = uploadedImages.filter(img => img !== null);
             if (activeImages.length >= MAX_IMAGES) {
@@ -520,32 +513,28 @@
                 return;
             }
             targetUploadSlot = null;
-            mainFileInput.setAttribute('multiple', 'multiple'); // 通用上傳支援多選
+            mainFileInput.setAttribute('multiple', 'multiple');
             mainFileInput.click();
         });
 
-        // 隱藏的 input:file 變更事件
         mainFileInput.addEventListener('change', (e) => {
             const files = Array.from(e.target.files);
             
             if (targetUploadSlot !== null) {
-                // 如果有點擊特定格子，只處理第一張圖片放入該格子
                 if (files.length > 0) {
                     processImageFileToSpecificZone(files[0], targetUploadSlot);
                 }
-                targetUploadSlot = null; // 重置
+                targetUploadSlot = null; 
             } else {
-                // 如果是通用上傳，尋找空位放入
                 files.forEach(file => {
                     if (uploadedImages.indexOf(null) !== -1) {
                         processImageFileToAvailableZone(file);
                     }
                 });
             }
-            mainFileInput.value = ''; // 清除 value 確保下次選同一個檔案仍會觸發
+            mainFileInput.value = ''; 
         });
 
-        // 針對 promptInput 攔截貼上 (Paste) 事件
         promptInput.addEventListener('paste', (e) => {
             const clipboardData = e.clipboardData || window.clipboardData;
             if (!clipboardData) return;
@@ -565,7 +554,6 @@
             }
         });
 
-        // 針對 promptInput 攔截拖放 (Drag & Drop) 事件 (通用放入空位)
         promptInputWrapper.addEventListener('dragover', (e) => {
             e.preventDefault();
             promptInputWrapper.classList.add('!border-yellow-400', '!bg-[#323947]');
@@ -590,10 +578,8 @@
             }
         });
 
-        // 初始化渲染
         renderGallery();
 
-        // 日誌輔助函式
         function appendLog(text, isAiResponse = false) {
             const p = document.createElement('div');
             if (isAiResponse) {
@@ -635,7 +621,6 @@
             });
         }
 
-        // 當使用者點擊生成按鈕時觸發
         generateBtn.addEventListener('click', async () => {
             const prompt = promptInput.value.trim();
             const activeImages = uploadedImages.filter(img => img !== null);
@@ -652,25 +637,21 @@
             startSimulatedLogs(hasImage);
 
             try {
-                // 將過濾掉 null 的圖片陣列傳給 API
                 const imageBases = activeImages.map(img => img.base64);
                 const resultData = await generateImageWithRetry(prompt, imageBases);
                 
-                if (resultData && resultData._isCustomApiError) {
-                    // 處理使用者自訂 API 錯誤 (無痕平順降級，不再拋出 Error)
+                // 完美攔截並處理 API 授權錯誤，不再拋出紅字 Exception
+                if (resultData && resultData._isAuthError) {
                     simLogTimeouts.forEach(clearTimeout);
                     logPing.classList.add('hidden');
-                    appendLog(`❌ [系統] 您提供的 API 金鑰無效或目前環境不支援此進階模型。`);
-                    appendLog(`⚠️ [系統] 已自動為您切換回「預設基礎版模型」。請重新點擊生成圖片按鈕即可正常使用。`);
-                    showError('金鑰無效或環境限制，已強制切換回基礎模型，請重試。');
-                    // 自動防呆降級
-                    currentModel = 'gemini-2.5-flash-image-preview';
-                    customApiKey = '';
-                    // 還原按鈕上的文字為基礎版
-                    const btnSubText = document.getElementById('generate-btn-sub-text');
-                    if (btnSubText) btnSubText.textContent = 'Gemini 2.5 Flash (基礎版)';
                     setLoading(false);
-                    return; // 提早結束，不繼續執行後續圖片渲染
+                    
+                    // 自動彈出設定視窗引導輸入金鑰
+                    openModelModal();
+                    
+                    showError('需要授權：請在設定視窗輸入有效的 Google API 金鑰。');
+                    appendLog(`❌ [系統] 尚未授權或金鑰無效。已自動為您開啟設定視窗。`);
+                    return; // 提早結束，不繼續執行
                 }
 
                 const base64Image = resultData;
@@ -692,7 +673,6 @@
                     
                     remainingQuota -= 1;
                     
-                    // 日誌提示改為動態顯示模型名稱
                     const modelNameText = currentModel === 'gemini-2.5-flash-image-preview' ? 'Gemini 2.5 Flash (基礎版)' : 'Gemini 3 Pro (進階版)';
                     appendLog(`ℹ️ [系統資訊] 本次生成由 ${modelNameText} 提供支援。\n👤 使用者：${currentUser} | 扣除額度：1 | 剩餘額度：${remainingQuota}`);
                     
@@ -700,6 +680,7 @@
                     showError('無法從 API 回應中獲取圖片資料。');
                 }
             } catch (error) {
+                // 只有真正的非預期錯誤才會印在 Console
                 console.error('Error generating image:', error);
                 
                 simLogTimeouts.forEach(clearTimeout);
@@ -709,8 +690,8 @@
                     appendLog(`❌ [系統] 圖片生成因安全政策 (SAFETY) 被阻擋。`);
                     showError(error.message);
                 } else {
-                    appendLog(`❌ [系統] 發生錯誤：${error.message}`);
-                    showError(error.message || '圖片生成失敗，請稍後再試。');
+                    appendLog(`❌ [系統] 發生網路或未知錯誤，請檢查您的連線。`);
+                    showError('圖片生成失敗，請稍後再試。');
                 }
             } finally {
                 setLoading(false);
@@ -767,13 +748,12 @@
             for (let i = 0; i < retries; i++) {
                 try {
                     const result = await callImageGenerationAPI(prompt, imagesArray);
-                    // 如果攔截到我們自訂的降級錯誤物件，直接往上回傳，不重試
-                    if (result && result._isCustomApiError) {
+                    // 若回傳自訂的授權錯誤物件，直接往上拋，絕對不重試
+                    if (result && result._isAuthError) {
                         return result;
                     }
                     return result;
                 } catch (error) {
-                    // 如果是因為安全審查或是最後一次重試失敗，則拋出 Error
                     if (error.finishReason === "SAFETY" || i === retries - 1) throw error;
                     console.warn(`Attempt ${i+1} failed, retrying in ${delay * Math.pow(2, i)}ms...`);
                     await new Promise(res => setTimeout(res, delay * Math.pow(2, i))); 
@@ -782,8 +762,8 @@
         }
         
         async function callImageGenerationAPI(prompt, imagesArray) {
-            // 如果是基礎模型就用環境變數，進階模型則使用使用者剛剛設定的金鑰
-            const apiKeyToUse = currentModel === 'gemini-2.5-flash-image-preview' ? "" : customApiKey; 
+            // 使用者有填金鑰就用，沒填則使用環境預設的金鑰
+            const apiKeyToUse = customApiKey ? customApiKey : DEFAULT_API_KEY; 
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${apiKeyToUse}`;
 
             const imagePrompt = prompt 
@@ -809,21 +789,15 @@
                 body: JSON.stringify(payload)
             });
 
-            const responseText = await response.text();
-
             if (!response.ok) {
-                // 如果回傳的是授權錯誤 (400, 401, 403, 404)
+                // 優化：只要是 4xx 權限相關錯誤，回傳特定物件告知外層要開啟視窗，不再拋出 throw Error 造成崩潰
                 if ([400, 401, 403, 404].includes(response.status)) {
-                    if (currentModel !== 'gemini-2.5-flash-image-preview') {
-                        // 回傳特定物件，避免使用 throw Error 造成 Console 印出紅字
-                        return { _isCustomApiError: true };
-                    } else {
-                        throw new Error(`授權失敗 (${response.status})：請確認您是否已登入 Google 帳號或 API 金鑰有效。`);
-                    }
+                    return { _isAuthError: true, status: response.status };
                 }
                 throw new Error(`API 請求失敗，狀態碼： ${response.status}`);
             }
 
+            const responseText = await response.text();
             let result;
             try {
                 result = JSON.parse(responseText);
@@ -855,8 +829,8 @@
         }
 
         async function callTextGenerationAPI(prompt, hasImage) {
-            const apiKey = ""; 
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const apiKeyToUse = customApiKey ? customApiKey : DEFAULT_API_KEY; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKeyToUse}`;
 
             let textPrompt = `你是一個 AI 圖像生成助理的「內部思維分析器」。使用者剛剛請求系統生成了一張圖片。\n\n`;
             if (prompt) textPrompt += `使用者的提示詞為：「${prompt}」。\n`;
@@ -874,16 +848,12 @@
                 });
                 
                 if (!response.ok) {
-                    if (response.status === 401 || response.status === 403) {
-                        return "（授權失敗：無法取得思路分析，請確認您已登入 Google 帳號。）";
-                    }
-                    return "（無法取得思路分析，請享受生成的圖片即可。）";
+                    return "（提示：因為權限不足，目前無法取得思路分析，但您可以享受生成的圖片即可。）";
                 }
                 
                 const result = await response.json();
                 return result.candidates?.[0]?.content?.parts?.[0]?.text || "（無法取得思路分析。）";
             } catch (e) {
-                console.error("Text API Error:", e);
                 return "（產生思路時發生網路錯誤。）";
             }
         }
