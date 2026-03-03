@@ -109,7 +109,7 @@
                     <div class="shrink-0 flex gap-2 w-full">
                         <button id="generate-btn" class="flex-1 flex flex-col items-center justify-center bg-[#eab308] hover:bg-[#d97706] text-[#1e232e] py-2 px-4 rounded-lg transition-transform duration-200 ease-in-out transform hover:scale-[1.02] focus:outline-none disabled:bg-[#475166] disabled:text-slate-400 disabled:cursor-not-allowed disabled:transform-none shadow-lg">
                             <span id="generate-btn-main-text" class="text-base font-bold leading-tight">生成圖片</span>
-                            <span id="generate-btn-sub-text" class="text-[10px] font-medium opacity-80 mt-0.5">Gemini 2.5 Flash (基礎版)</span>
+                            <span id="generate-btn-sub-text" class="text-[10px] font-medium opacity-80 mt-0.5">Gemini 2.5 Flash (Canvas專用)</span>
                         </button>
                         <button id="model-select-btn" class="bg-[#2a303c] hover:bg-[#374151] border border-[#475166] text-slate-300 w-12 sm:w-14 rounded-lg transition-colors flex items-center justify-center shadow-lg group focus:outline-none" title="授權設定與模型選擇">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16" class="group-hover:text-yellow-400 transition-colors">
@@ -164,7 +164,7 @@
                                 安全提醒：
                             </div>
                             <div class="text-yellow-500/70 leading-relaxed">
-                                若您於外部網站 (如 GitHub Pages) 開啟此工具，系統將自動引導您進行 API 金鑰授權，所有金鑰僅存於當下記憶體中，關閉即失效。
+                                若您於外部網站 (如 GitHub Pages) 開啟此工具，請在右側設定選擇「Imagen 3.0」模型並貼上您的金鑰即可正常使用。所有金鑰僅存於當下記憶體中，關閉即失效。
                             </div>
                         </div>
                         <div class="text-slate-500 italic text-left">等待生成指令...</div>
@@ -208,7 +208,7 @@
                     <label class="block text-sm font-medium text-slate-300 mb-2">Google Gemini API 金鑰 (必填)</label>
                     <input type="password" id="api-key-input" class="w-full bg-[#181d26] border border-[#475166] text-slate-200 text-sm rounded-lg focus:ring-yellow-500 focus:border-yellow-500 block p-3 outline-none transition-colors placeholder-slate-600" placeholder="貼上您的 API 金鑰...">
                     
-                    <!-- 新增：取得金鑰的教學指南區塊 -->
+                    <!-- 取得金鑰的教學指南區塊 -->
                     <div class="mt-3 text-xs text-slate-300 bg-[#2a303c]/80 p-3.5 rounded-lg border border-[#475166]">
                         <p class="font-medium text-yellow-400 mb-2 flex items-center gap-1.5">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
@@ -229,9 +229,10 @@
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-2">選擇模型版本</label>
                     <select id="model-select" class="w-full bg-[#181d26] border border-[#475166] text-slate-200 text-sm rounded-lg focus:ring-yellow-500 focus:border-yellow-500 block p-3 outline-none transition-colors cursor-pointer">
-                        <option value="gemini-2.5-flash-image-preview">預設基礎版 (Gemini 2.5 Flash)</option>
-                        <option value="gemini-3-pro-image-preview-11-2025">進階版 (Nano Banana Pro / Gemini 3 Pro)</option>
+                        <option value="gemini-2.5-flash-image-preview">Gemini 2.5 Flash (Canvas 預覽環境專用)</option>
+                        <option value="imagen-3.0-generate-001" selected>Imagen 3.0 (自備金鑰 / GitHub Pages 專用)</option>
                     </select>
+                    <p class="text-xs text-slate-400 mt-2 ml-1">💡 提示：若您在外部網站使用自備金鑰，請務必選擇 <strong class="text-slate-300">Imagen 3.0</strong> 模型才能正常運作喔！</p>
                 </div>
             </div>
             <div class="px-6 py-4 border-t border-[#2d3748] bg-[#2a303c]/30 flex justify-end gap-3">
@@ -247,6 +248,9 @@
         // ==========================================
         const DEFAULT_API_KEY = ""; 
         
+        // 自動偵測當前執行環境 (判斷是否在 Google Canvas 預覽環境中)
+        const isCanvasEnv = window.location.hostname.includes('usercontent.goog') || window.location.hostname === '' || window.location.hostname === 'localhost';
+
         const promptInput = document.getElementById('prompt-input');
         const promptInputWrapper = document.getElementById('prompt-input-wrapper');
         const generateBtn = document.getElementById('generate-btn');
@@ -258,7 +262,8 @@
         const downloadBtn = document.getElementById('download-btn');
         
         // 模型設定變數與 UI 元素
-        let currentModel = 'gemini-2.5-flash-image-preview'; // 預設使用基礎模型
+        // 若在 Canvas 環境預設使用基礎版，若在外部部署則預設切換至公開支援的 Imagen 3.0
+        let currentModel = isCanvasEnv ? 'gemini-2.5-flash-image-preview' : 'imagen-3.0-generate-001'; 
         let customApiKey = ''; // 僅存活於當前記憶體中
         
         const modelModal = document.getElementById('model-modal');
@@ -269,6 +274,17 @@
         const modelConfirmBtn = document.getElementById('model-modal-confirm');
         const modelSelect = document.getElementById('model-select');
         const apiKeyInput = document.getElementById('api-key-input');
+
+        // 初始化設定按鈕文字
+        function updateBtnSubText() {
+            const btnSubText = document.getElementById('generate-btn-sub-text');
+            if (btnSubText) {
+                if (currentModel === 'gemini-2.5-flash-image-preview') btnSubText.textContent = 'Gemini 2.5 Flash (Canvas專用)';
+                else if (currentModel === 'imagen-3.0-generate-001') btnSubText.textContent = 'Imagen 3.0 (自備金鑰專用)';
+                else btnSubText.textContent = '未知模型';
+            }
+        }
+        updateBtnSubText();
 
         // 模型視窗開關邏輯
         function openModelModal() {
@@ -303,18 +319,11 @@
             currentModel = modelSelect.value;
             customApiKey = apiKeyInput.value.trim();
             
-            // 同步更新按鈕上的模型版本文字
-            const btnSubText = document.getElementById('generate-btn-sub-text');
-            if (btnSubText) {
-                btnSubText.textContent = currentModel === 'gemini-2.5-flash-image-preview' 
-                    ? 'Gemini 2.5 Flash (基礎版)' 
-                    : 'Gemini 3 Pro (進階版)';
-            }
-            
+            updateBtnSubText();
             closeModelModal();
             
             if (customApiKey) {
-                appendLog(`✅ [系統] 授權金鑰已設定！您可以開始生圖了。`);
+                appendLog(`✅ [系統] 模型與金鑰已設定！請嘗試再次生成圖片。`);
                 hideError();
             }
         });
@@ -610,7 +619,7 @@
 
             const delays = [
                 { time: 1000, msg: '🔍 [系統] 正在解析您的提示詞與參數...' },
-                { time: 2500, msg: hasImage ? '🖼️ [系統] 正在萃取上傳圖片的特徵與參考風格...' : '🧠 [系統] 正在建立畫面主體結構與語意關聯...' },
+                { time: 2500, msg: hasImage ? '🖼️ [系統] 正在處理影像資料...' : '🧠 [系統] 正在建立畫面主體結構與語意關聯...' },
                 { time: 5000, msg: '✨ [系統] 模型正在進行去噪聲運算 (Latent Denoising)...' },
                 { time: 8000, msg: '🎨 [系統] 正在渲染細節與色彩優化...' }
             ];
@@ -630,6 +639,10 @@
                 return;
             }
             
+            if (currentModel === 'imagen-3.0-generate-001' && activeImages.length > 0) {
+                alert("💡 溫馨提示：Imagen 3.0 模型目前僅支援「文字生圖」。我們將為您繼續生成圖片，但您上傳的參考圖片將會被系統忽略。");
+            }
+            
             setLoading(true);
             hideError();
             
@@ -640,18 +653,17 @@
                 const imageBases = activeImages.map(img => img.base64);
                 const resultData = await generateImageWithRetry(prompt, imageBases);
                 
-                // 完美攔截並處理 API 授權錯誤，不再拋出紅字 Exception
+                // 攔截並處理真正的 API 授權錯誤
                 if (resultData && resultData._isAuthError) {
                     simLogTimeouts.forEach(clearTimeout);
                     logPing.classList.add('hidden');
                     setLoading(false);
                     
-                    // 自動彈出設定視窗引導輸入金鑰
                     openModelModal();
                     
-                    showError('需要授權：請在設定視窗輸入有效的 Google API 金鑰。');
-                    appendLog(`❌ [系統] 尚未授權或金鑰無效。已自動為您開啟設定視窗。`);
-                    return; // 提早結束，不繼續執行
+                    showError('授權失敗：請確認您輸入的金鑰正確無誤，且無多餘空白。');
+                    appendLog(`❌ [系統] 授權失敗或金鑰無效 (錯誤碼 ${resultData.status})。已自動為您開啟設定視窗。`);
+                    return; 
                 }
 
                 const base64Image = resultData;
@@ -673,16 +685,13 @@
                     
                     remainingQuota -= 1;
                     
-                    const modelNameText = currentModel === 'gemini-2.5-flash-image-preview' ? 'Gemini 2.5 Flash (基礎版)' : 'Gemini 3 Pro (進階版)';
+                    const modelNameText = currentModel === 'gemini-2.5-flash-image-preview' ? 'Gemini 2.5 Flash (Canvas專用)' : 'Imagen 3.0 (對外公開版)';
                     appendLog(`ℹ️ [系統資訊] 本次生成由 ${modelNameText} 提供支援。\n👤 使用者：${currentUser} | 扣除額度：1 | 剩餘額度：${remainingQuota}`);
                     
                 } else {
                     showError('無法從 API 回應中獲取圖片資料。');
                 }
             } catch (error) {
-                // 只有真正的非預期錯誤才會印在 Console
-                console.error('Error generating image:', error);
-                
                 simLogTimeouts.forEach(clearTimeout);
                 logPing.classList.add('hidden');
                 
@@ -690,8 +699,9 @@
                     appendLog(`❌ [系統] 圖片生成因安全政策 (SAFETY) 被阻擋。`);
                     showError(error.message);
                 } else {
-                    appendLog(`❌ [系統] 發生網路或未知錯誤，請檢查您的連線。`);
-                    showError('圖片生成失敗，請稍後再試。');
+                    // 把 Google 伺服器傳回的真實錯誤訊息印在畫面上，方便找原因
+                    appendLog(`❌ [系統] API 執行失敗：\n${error.message}`);
+                    showError(`產生失敗：${error.message}`);
                 }
             } finally {
                 setLoading(false);
@@ -762,26 +772,35 @@
         }
         
         async function callImageGenerationAPI(prompt, imagesArray) {
-            // 使用者有填金鑰就用，沒填則使用環境預設的金鑰
             const apiKeyToUse = customApiKey ? customApiKey : DEFAULT_API_KEY; 
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${apiKeyToUse}`;
-
-            const imagePrompt = prompt 
-                ? `Generate a highly detailed image based on the following description: ${prompt}` 
-                : "Generate a highly detailed, random, creative, and beautiful artwork.";
-
-            const parts = [{ text: imagePrompt }];
             
-            if (imagesArray && imagesArray.length > 0) {
-                imagesArray.forEach(base64Data => {
-                    parts.push({ inlineData: { mimeType: 'image/png', data: base64Data } });
-                });
-            }
+            // 移除前端強制阻擋，讓網路請求自然判斷環境。
+            // 在 Canvas 環境中，即便 key 為空字串，底層代理也能順利通過；外部環境則會由 Google API 報錯。
 
-            const payload = {
-                contents: [{ parts: parts }],
-                generationConfig: { responseModalities: ['TEXT', 'IMAGE'] },
-            };
+            let apiUrl, payload;
+            const imagePrompt = prompt || "Generate a highly detailed, random, creative, and beautiful artwork.";
+
+            if (currentModel === 'imagen-3.0-generate-001') {
+                // Imagen 3.0 的公開 API 負載格式 (僅支援文字)
+                apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:predict?key=${apiKeyToUse}`;
+                payload = {
+                    instances: [{ prompt: imagePrompt }],
+                    parameters: { sampleCount: 1 }
+                };
+            } else {
+                // Gemini 2.5 Flash 的專屬負載格式 (支援圖文)
+                apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${apiKeyToUse}`;
+                const parts = [{ text: imagePrompt }];
+                if (imagesArray && imagesArray.length > 0) {
+                    imagesArray.forEach(base64Data => {
+                        parts.push({ inlineData: { mimeType: 'image/png', data: base64Data } });
+                    });
+                }
+                payload = {
+                    contents: [{ parts: parts }],
+                    generationConfig: { responseModalities: ['TEXT', 'IMAGE'] },
+                };
+            }
 
             const response = await fetch(apiUrl, {
                 method: 'POST',
@@ -790,11 +809,24 @@
             });
 
             if (!response.ok) {
-                // 優化：只要是 4xx 權限相關錯誤，回傳特定物件告知外層要開啟視窗，不再拋出 throw Error 造成崩潰
-                if ([400, 401, 403, 404].includes(response.status)) {
+                const errText = await response.text();
+                // 只有真正的 API 金鑰無效/缺失，才會觸發重新輸入金鑰的視窗
+                const isKeyError = response.status === 401 || 
+                                   (response.status === 403 && errText.toLowerCase().includes("api key")) ||
+                                   (response.status === 400 && errText.toLowerCase().includes("api key"));
+
+                if (isKeyError) {
                     return { _isAuthError: true, status: response.status };
                 }
-                throw new Error(`API 請求失敗，狀態碼： ${response.status}`);
+                
+                // 將其他錯誤 (如 404 模型找不到、400 參數錯誤) 解碼並直接顯示在畫面上
+                let errMsg = errText;
+                try {
+                    const errObj = JSON.parse(errText);
+                    if (errObj.error && errObj.error.message) errMsg = errObj.error.message;
+                } catch (e) {}
+                
+                throw new Error(`(${response.status}) ${errMsg}`);
             }
 
             const responseText = await response.text();
@@ -807,22 +839,29 @@
             
             if (result.error) throw new Error(`API 錯誤: ${result.error.message}`);
 
-            const candidates = result?.candidates;
-            if (!candidates || candidates.length === 0) {
-                const blockReason = result?.promptFeedback?.blockReason;
-                throw new Error(`API 請求被阻擋或無候選回應。${blockReason ? '原因: ' + blockReason : ''}`);
-            }
-            
-            const base64Data = candidates[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
-
-            if (!base64Data) {
-                let errorMsg = "API 回應中未包含有效的圖片資料，請嘗試更換描述詞。";
-                if (candidates[0]?.finishReason === "SAFETY") {
-                    errorMsg = "圖片生成因安全政策被阻擋。請修改您的提示詞。";
+            let base64Data;
+            if (currentModel === 'imagen-3.0-generate-001') {
+                base64Data = result.predictions?.[0]?.bytesBase64Encoded;
+                if (!base64Data) throw new Error("Imagen API 未回傳有效的圖片。");
+            } else {
+                const candidates = result?.candidates;
+                if (!candidates || candidates.length === 0) {
+                    const blockReason = result?.promptFeedback?.blockReason;
+                    throw new Error(`API 請求被阻擋或無候選回應。${blockReason ? '原因: ' + blockReason : ''}`);
                 }
-                const err = new Error(errorMsg);
-                err.finishReason = candidates[0]?.finishReason;
-                throw err;
+                
+                base64Data = candidates[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+
+                if (!base64Data) {
+                    let errorMsg = "API 回應中未包含有效的圖片資料，請嘗試更換描述詞。";
+                    if (candidates[0]?.finishReason === "SAFETY") {
+                        errorMsg = "圖片生成因安全政策被阻擋。請修改您的提示詞。";
+                        const err = new Error(errorMsg);
+                        err.finishReason = candidates[0]?.finishReason;
+                        throw err;
+                    }
+                    throw new Error(errorMsg);
+                }
             }
 
             return base64Data;
@@ -830,7 +869,9 @@
 
         async function callTextGenerationAPI(prompt, hasImage) {
             const apiKeyToUse = customApiKey ? customApiKey : DEFAULT_API_KEY; 
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKeyToUse}`;
+            // 若為自帶金鑰，自動切換為對外公開支援度較高的 Gemini 1.5 Flash 來進行文字分析
+            const textModel = (!isCanvasEnv && apiKeyToUse !== DEFAULT_API_KEY) ? 'gemini-1.5-flash' : 'gemini-2.5-flash-preview-09-2025';
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${textModel}:generateContent?key=${apiKeyToUse}`;
 
             let textPrompt = `你是一個 AI 圖像生成助理的「內部思維分析器」。使用者剛剛請求系統生成了一張圖片。\n\n`;
             if (prompt) textPrompt += `使用者的提示詞為：「${prompt}」。\n`;
@@ -848,7 +889,7 @@
                 });
                 
                 if (!response.ok) {
-                    return "（提示：因為權限不足，目前無法取得思路分析，但您可以享受生成的圖片即可。）";
+                    return "（提示：模型順利產出圖片，但在呼叫思路分析時遭遇權限阻擋。）";
                 }
                 
                 const result = await response.json();
